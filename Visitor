@@ -1,0 +1,73 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+import java.util.Vector;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+public class Visitor {
+
+    private Vector<String> Menu;
+    JSONParser parser = new JSONParser();
+
+    public Vector<String> addDishIntoOrder(Vector<String> Order, DishAndDrink NewDish) {
+        Order.add(NewDish.toString());
+        return Order;
+    }
+    public void deleteDishFromOrder(Vector<String> Order, DishAndDrink ExtraDish) {
+        for (int i = 0; i < Order.size(); ++i) {
+            if (Order.get(i).equals(ExtraDish.toString())) {
+                Order.remove(i);
+            }
+        }
+    }
+    public void CancelMenuPoint(String dishId) {
+        try(FileReader reader = new FileReader("menu_dishes.json")) {
+            JSONObject jsonObject = (JSONObject)parser.parse(reader);
+            JSONArray menuJSONArray = (JSONArray)jsonObject.get("dishes");
+            for (Object it: menuJSONArray) {
+                JSONObject dish = (JSONObject) it;
+                String id = (String) dish.get("menu_dish_id");
+                if (id.equals(dishId)) {
+                    dish.replace("menu_dish_active", false, true);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Parsing Error");
+        }
+    }
+
+    public void AddMenuPoint(String dishId) {
+        try(FileReader reader = new FileReader("C:\\Users\\U\\IdeaProjects\\classwork\\src\\menu_dishes.json")) {
+            JSONObject jsonObject = (JSONObject)parser.parse(reader);
+            JSONArray menuJSONArray = (JSONArray)jsonObject.get("dishes");
+            for (Object it: menuJSONArray) {
+                JSONObject dish = (JSONObject) it;
+                String id = (String) dish.get("menu_dish_id");
+                if (id.equals(dishId)) {
+                    dish.replace("menu_dish_active", true, false);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Parsing Error");
+        }
+    }
+
+    public void createOrder() {
+
+    }
+    public void CancelOrder(Vector<String> Order) {
+        Order.clear();
+    }
+    public void UpdateView(Vector<String> Order) {
+        System.out.println("Updated Order:\n");
+        for (int i = 0; i < Order.size(); ++i) {
+            System.out.println(Order.get(i));
+            System.out.println("\n");
+        }
+    }
+
+}
